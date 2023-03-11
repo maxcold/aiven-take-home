@@ -1,19 +1,8 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import fetch from 'node-fetch';
-import * as config from '../../config.js';
 
-interface Cloud {
-    cloud_name: string;
-    cloud_description: string;
-    geo_longitude: number;
-    geo_latitude: number;
-    geo_region: string;
-    provider: string;
-    provider_description: string;
-}
-interface Clouds {
-    clouds: Array<Cloud>;
-}
+import * as config from '../../config.js';
+import { sortCloudsByDistance } from "./utils.js";
 
 const router: Router = express.Router();
 const aivenApiUrl = config.aivenApiUrl;
@@ -27,7 +16,36 @@ router.get('/', async (req: Request, res: Response, next:NextFunction) => {
             dataCached = data;
         }
 
-        res.send(dataCached);
+        const query = req.query;
+        let resultClouds = [...dataCached.clouds]
+
+        if (query.provider) {
+            const provider = query.provider;
+
+            resultClouds = resultClouds.filter(cloud => cloud.provider === provider);
+        }
+
+        if (query.sort && query.lat && query.lon) {
+            const sort = query.sort;
+            const lat = query.lat && (typeof query.lat === 'string') && parseFloat(query.lat);
+            const lon = query.lon && (typeof query.lon === 'string') && parseFloat(query.lon);
+            let direction: SortDirection | undefined
+
+            switch (sort) {
+                case 'geo_asc':
+                    direction = 'asc';
+                    break;
+                case 'geo_desc':
+                    direction = 'desc';
+                    break;
+            }
+
+            if (direction && lat && lon) {
+                resultClouds = resultClouds.sort(sortCloudsByDistance(direction, lat, lon));
+            }
+        }
+
+        res.send(resultClouds);
     } catch (error) {
         return next(error);
     }
