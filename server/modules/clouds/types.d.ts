@@ -11,4 +11,11 @@ interface Clouds {
     clouds: Array<Cloud>;
 }
 
+interface Provider {
+    key: string;
+    name: string;
+}
+
+type Providers = Array<Provider>;
+
 type SortDirection = 'asc' | 'desc';

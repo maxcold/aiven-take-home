@@ -51,4 +51,31 @@ router.get('/', async (req: Request, res: Response, next:NextFunction) => {
     }
 });
 
+router.get('/providers', async (req, res, next) => {
+    try {
+        if (!dataCached) {
+            const response = await fetch(`${aivenApiUrl}/v1/clouds`);
+            const data: Clouds = await response.json() as Clouds;
+            dataCached = data;
+        }
+        const uniqueProviders: string[] = [];
+        const providers = dataCached.clouds.reduce((res: Providers, cloud: Cloud) => {
+            if (!uniqueProviders.includes(cloud.provider)) {
+                uniqueProviders.push(cloud.provider);
+
+                res.push({
+                    key: cloud.provider,
+                    name: cloud.provider_description
+                });
+            }
+
+            return res;
+        }, []);
+        res.send(providers);
+    }
+    catch (error) {
+        return next(error);
+    }
+});
+
 export default router;
