@@ -1,11 +1,9 @@
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import cloudsRoutes from './modules/clouds/routes';
-
-dotenv.config();
+import cloudsRoutes from './modules/clouds/routes.js';
+import * as config from './config.js';
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = config.port;
 
 app.use('/clouds', cloudsRoutes)
 app.listen(port, () => {
