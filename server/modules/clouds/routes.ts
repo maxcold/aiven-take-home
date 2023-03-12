@@ -8,16 +8,22 @@ const router: Router = express.Router()
 const aivenApiUrl = config.aivenApiUrl
 let dataCached: Clouds
 
+const getClouds = async () => {
+    if (!dataCached) {
+        const response = await fetch(`${aivenApiUrl}/v1/clouds`)
+        const data: CloudsResponse = await response.json() as CloudsResponse
+        dataCached = data.clouds
+    }
+
+    return dataCached
+}
+
 router.get('/', async (req: Request, res: Response, next:NextFunction) => {
     try {
-        if (!dataCached) {
-            const response = await fetch(`${aivenApiUrl}/v1/clouds`)
-            const data: Clouds = await response.json() as Clouds
-            dataCached = data
-        }
+        const clouds = await getClouds()
 
         const query = req.query
-        let resultClouds = [...dataCached.clouds]
+        let resultClouds = [...clouds]
 
         if (query.provider) {
             const provider = query.provider
@@ -53,13 +59,10 @@ router.get('/', async (req: Request, res: Response, next:NextFunction) => {
 
 router.get('/providers', async (req, res, next) => {
     try {
-        if (!dataCached) {
-            const response = await fetch(`${aivenApiUrl}/v1/clouds`)
-            const data: Clouds = await response.json() as Clouds
-            dataCached = data
-        }
+        const clouds = await getClouds()
+
         const uniqueProviders: string[] = []
-        const providers = dataCached.clouds.reduce((res: Providers, cloud: Cloud) => {
+        const providers = clouds.reduce((res: Providers, cloud: Cloud) => {
             if (!uniqueProviders.includes(cloud.provider)) {
                 uniqueProviders.push(cloud.provider)
 

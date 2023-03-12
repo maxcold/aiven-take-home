@@ -7,7 +7,9 @@ interface Cloud {
     provider: string;
     provider_description: string;
 }
-interface Clouds {
+
+type Clouds = Array<Cloud>;
+interface CloudsResponse {
     clouds: Array<Cloud>;
 }
 
