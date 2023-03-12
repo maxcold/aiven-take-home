@@ -29,3 +29,25 @@ export const sortCloudsByDistance = (direction: SortDirection, lat: number, lon:
         }
     }
 }
+
+export const getUniqueProviders = (clouds: Clouds): Providers => {
+    const uniqueProviders: string[] = []
+    const providers = clouds.reduce((res: Providers, cloud: Cloud) => {
+        if (!uniqueProviders.includes(cloud.provider)) {
+            uniqueProviders.push(cloud.provider)
+
+            res.push({
+                key: cloud.provider,
+                name: cloud.provider_description
+            })
+        }
+
+        return res
+    }, [])
+
+    return providers
+}
+
+export const filterCloudsByProvider = (clouds: Clouds, provider: string): Clouds => {
+    return clouds.filter(cloud => cloud.provider === provider)
+}

@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import NodeCache from 'node-cache'
 
 import * as config from '../../config.js'
-import { sortCloudsByDistance } from './utils.js'
+import { sortCloudsByDistance, getUniqueProviders, filterCloudsByProvider } from './utils.js'
 
 const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 60 * 60 * 24 })
 const router: Router = express.Router()
@@ -30,10 +30,10 @@ router.get('/', async (req: Request, res: Response, next:NextFunction) => {
         const query = req.query
         let resultClouds = [...clouds]
 
-        if (query.provider) {
+        if (query.provider && typeof query.provider === 'string') {
             const provider = query.provider
 
-            resultClouds = resultClouds.filter(cloud => cloud.provider === provider)
+            resultClouds = filterCloudsByProvider(resultClouds, provider)
         }
 
         if (query.sort && query.lat && query.lon) {
@@ -65,20 +65,7 @@ router.get('/', async (req: Request, res: Response, next:NextFunction) => {
 router.get('/providers', async (req, res, next) => {
     try {
         const clouds = await getClouds()
-
-        const uniqueProviders: string[] = []
-        const providers = clouds.reduce((res: Providers, cloud: Cloud) => {
-            if (!uniqueProviders.includes(cloud.provider)) {
-                uniqueProviders.push(cloud.provider)
-
-                res.push({
-                    key: cloud.provider,
-                    name: cloud.provider_description
-                })
-            }
-
-            return res
-        }, [])
+        const providers = getUniqueProviders(clouds)
         res.send(providers)
     }
     catch (error) {
