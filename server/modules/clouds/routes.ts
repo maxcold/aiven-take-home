@@ -1,21 +1,26 @@
 import express, { NextFunction, Request, Response, Router } from 'express'
 import fetch from 'node-fetch'
+import NodeCache from 'node-cache'
 
 import * as config from '../../config.js'
 import { sortCloudsByDistance } from './utils.js'
 
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 60 * 60 * 24 })
 const router: Router = express.Router()
 const aivenApiUrl = config.aivenApiUrl
-let dataCached: Clouds
 
 const getClouds = async () => {
-    if (!dataCached) {
+    let clouds: Clouds | undefined = cache.get('clouds')
+
+    if (!clouds) {
         const response = await fetch(`${aivenApiUrl}/v1/clouds`)
         const data: CloudsResponse = await response.json() as CloudsResponse
-        dataCached = data.clouds
+
+        clouds = data.clouds
+        cache.set('clouds', clouds)
     }
 
-    return dataCached
+    return clouds
 }
 
 router.get('/', async (req: Request, res: Response, next:NextFunction) => {
