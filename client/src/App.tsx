@@ -24,6 +24,8 @@ interface Provider {
     name: string
 }
 
+const baseUrl = 'http://localhost:8000'
+
 function App() {
     const [clouds, setClouds] = useState([])
     const [providers, setProviders] = useState([])
@@ -48,7 +50,7 @@ function App() {
 
         queryParamsString = `?${queryParams.join('&')}`;
         async function fetchClouds() {
-            const response = await fetch(`http://localhost:8000/clouds${queryParamsString}`);
+            const response = await fetch(`${baseUrl}/clouds${queryParamsString}`);
             const data = await response.json();
             setClouds(data);
         }
@@ -57,7 +59,7 @@ function App() {
 
     useEffect(() => {
         async function fetchProviders() {
-            const response = await fetch('http://localhost:8000/clouds/providers')
+            const response = await fetch(`${baseUrl}/clouds/providers`)
             const data = await response.json()
             setProviders(data)
         }
