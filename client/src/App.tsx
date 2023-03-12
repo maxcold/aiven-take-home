@@ -11,13 +11,19 @@ import {
     Th,
     Thead,
     Tr
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
 
 import { useGeolocation } from './useGeolocation'
 
 interface Provider {
     key: string,
     name: string
+}
+
+interface Cloud {
+    cloud_name: string,
+    provider: string,
+    cloud_description: string
 }
 
 const baseUrl = 'http://localhost:8000'
@@ -44,14 +50,14 @@ function App() {
             queryParams.push(`provider=${provider}`)
         }
 
-        queryParamsString = `?${queryParams.join('&')}`;
+        queryParamsString = `?${queryParams.join('&')}`
         async function fetchClouds() {
-            const response = await fetch(`${baseUrl}/clouds${queryParamsString}`);
-            const data = await response.json();
-            setClouds(data);
+            const response = await fetch(`${baseUrl}/clouds${queryParamsString}`)
+            const data = await response.json()
+            setClouds(data)
         }
-        fetchClouds();
-    }, [sort, provider]);
+        fetchClouds()
+    }, [sort, provider])
 
     useEffect(() => {
         async function fetchProviders() {
@@ -104,7 +110,7 @@ function App() {
                         </Thead>
                         <Tbody>
                             {
-                                clouds.map((cloud: any) => (
+                                clouds.map((cloud: Cloud) => (
                                     <Tr key={cloud.cloud_name}>
                                         <Td>{cloud.cloud_name}</Td>
                                         <Td>{cloud.provider}</Td>
