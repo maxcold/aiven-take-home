@@ -1,5 +1,5 @@
 // Haversine Distance formula to calculate distance between two points on a perfect sphere
-const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+export const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371e3 // Earth radius in metres
     const f1 = lat1 * Math.PI / 180
     const f2 = lat2 * Math.PI / 180
