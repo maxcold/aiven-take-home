@@ -16,8 +16,8 @@ export const CloudsList = ({ clouds }: { clouds: Clouds }) => {
                     {
                         clouds.map((cloud: Cloud) => (
                             <Tr key={cloud.cloud_name}>
-                                <Td>{cloud.cloud_name}</Td>
-                                <Td>{cloud.provider}</Td>
+                                <Td data-cy="cloud-name-cell">{cloud.cloud_name}</Td>
+                                <Td data-cy="provider-cell">{cloud.provider}</Td>
                                 <Td>{cloud.cloud_description}</Td>
                             </Tr>
                         ))
