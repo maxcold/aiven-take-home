@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
     Box,
-    Container,
     Heading,
     Select,
     SimpleGrid,
@@ -13,9 +12,6 @@ import {
     Thead,
     Tr
 } from "@chakra-ui/react";
-
-import reactLogo from './assets/react.svg'
-import './App.css'
 
 import { useGeolocation } from './useGeolocation'
 
