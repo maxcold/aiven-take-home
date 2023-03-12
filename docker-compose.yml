@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  aiven-client:
+    build: ./client
+    ports:
+      - 5173:80
+
+  aiven-server:
+    build: ./server
+    ports:
+      - 8000:8000
